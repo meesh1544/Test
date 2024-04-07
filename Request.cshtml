@@ -1,0 +1,98 @@
+﻿@model TNT.ViewModels.RequestViewModel
+
+@{
+    ViewData["Title"] = "Request";
+}
+
+<div class="container" style="background: rgb(255, 255, 255, 0.8); width:50%; padding:10px; border-radius:15px;">
+    <div class="row">
+        <div class="col-sm">
+            <h1>Request For Service</h1>
+
+            <form action="https://formsubmit.co/74412162c9d2ac4e0c7908a970d35b71" method="POST">
+                <div class="form-group">
+                    <label for="name">Name:</label><br>
+                    <input type="text" id="name" name="name">
+                </div><br>
+
+                <div class="form-group">
+                    <label for="email">Email:</label><br>
+                    <input type="email" id="email" name="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="model">Make and Model:</label><br>
+                    <input type="text" id="model" name="model">
+                </div>
+
+                <div class="form-group">
+                    <label for="year">Year:</label><br>
+                    <input type="text" id="year" name="year">
+                </div>
+
+                <div class="form-group">
+                    <label for="serviceCategory">Choose a Service Category</label><br>
+                    <select name="serviceCategory" id="serviceCategory">
+                        <option value="" disabled hidden selected>-- Make Selection --</option>
+                        <!-- Loop to populate dropdown with service categories -->
+                        @foreach (var serviceCategory in Model.Categories)
+                        {
+                            <option value="@serviceCategory.CategoryID">@serviceCategory.CategoryName</option>
+                        }
+                        <option value="other">Other</option>
+                        <!-- End of loop -->
+                    </select><br>
+                </div>
+
+                <div id="serviceGroup" class="form-group" hidden>
+                    <label for="service">Choose a Service</label><br>
+                    <select name="service" id="service">
+                        <option id="servicePlaceholder" value="" disabled hidden selected>-- Make Selection --</option>
+                        <!-- Loop to populate dropdown with services -->
+                        @foreach (var service in Model.Services)
+                        {
+                            <option class="services category-@(service.CategoryID)" value="@service.ServiceID" hidden disabled>@service.ServiceName</option>
+                        }
+                        <!-- End of loop -->
+                    </select><br>
+                </div>
+
+                <label for="message">Message:</label><br>
+                <textarea id="message" name="message"></textarea><br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+
+        </div>
+    </div>
+    
+@section Scripts {
+    <script>
+        $('#serviceCategory').on('change', function(event){
+            //hide any previously unhidden options
+            $('.services').attr('hidden', true);
+            $('.services').attr('disabled', true);
+            $('.services').removeAttr('selected');
+
+
+            //unhide appropriate option
+            var categoryId = $(event.target).val();
+
+            //If they choose "other", keep the serviceGroup hidden
+            if ($('#serviceCategory').val() != "other") {
+
+                $('#serviceGroup').removeAttr('hidden');
+                $(`.category-${categoryId}`).removeAttr('hidden').removeAttr('disabled');
+                $('#servicePlaceholder').prop('selected', true);
+            }
+            
+            else {
+
+                $('#serviceGroup').attr('hidden', true);
+                $(`.category-${categoryId}`).attr('hidden', true);
+                $(`.category-${categoryId}`).attr('disabled', true);
+            }
+        });
+    </script>
+}
+
